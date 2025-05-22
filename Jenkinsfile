@@ -26,7 +26,7 @@ pipeline {
                 curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
 
                 echo "Unzipping"
-                unzip -o -q sonar-scanner.zip
+                unzip -o -q sonar-scanner.zip < /dev/null
 
                 echo "Scanner files:"
                 ls -lh sonar-scanner-5.0.1.3006-linux/bin
