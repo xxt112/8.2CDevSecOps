@@ -7,24 +7,21 @@ pipeline {
         echo 'Building...'
       }
     }
-    stage('Test') {
-      steps {
-        echo 'Testing...'
-        // 模拟测试失败：你也可以加个 error 'fail' 看失败通知
-        // error 'Tests failed'
-      }
-    }
   }
 
   post {
-    always {
-      emailext (
-        subject: "Build Status: ${currentBuild.currentResult}",
-        body: """<p>Build finished with status: ${currentBuild.currentResult}</p>
-                 <p>Check the details at: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
-        to: "你的邮箱地址",
-        mimeType: 'text/html',
-        attachLog: true
+    success {
+      emailext(
+        subject: "SUCCESS: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
+        body: "Good news! Job succeeded.\n\nURL: ${env.BUILD_URL}",
+        to: 'xutt9813@gmail.com'
+      )
+    }
+    failure {
+      emailext(
+        subject: "FAILURE: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
+        body: "Something went wrong...\n\nCheck here: ${env.BUILD_URL}",
+        to: 'xutt9813@gmail.com'
       )
     }
   }
