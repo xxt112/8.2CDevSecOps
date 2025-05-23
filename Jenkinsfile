@@ -18,23 +18,24 @@ pipeline {
             steps {
                 sh '''
                 set -x
-                echo "Cleaning workspace"
-                rm -rf sonar-scanner-5.0.1.3006-linux
-                rm -f sonar-scanner.zip
+                echo ">>> Current directory:"
+                pwd
+                echo ">>> Contents:"
+                ls -alh
 
-                echo "Downloading scanner"
+                echo ">>> Cleaning"
+                rm -rf sonar-scanner-5.0.1.3006-linux sonar-scanner.zip
+
+                echo ">>> Downloading"
                 curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
 
-                echo "Unzipping"
-                unzip -o -q sonar-scanner.zip < /dev/null
+                echo ">>> Unzipping"
+                unzip -q sonar-scanner.zip
 
-                echo "Scanner files:"
-                ls -lh sonar-scanner-5.0.1.3006-linux/bin
-
-                echo "Setting permission"
+                echo ">>> Granting permissions"
                 chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
 
-                echo "Running scanner"
+                echo ">>> Running scanner"
                 sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
                     -Dsonar.projectKey=xxt112 \
                     -Dsonar.organization=xxt112 \
@@ -44,6 +45,5 @@ pipeline {
                 '''
             }
         }
-
     }
 }
