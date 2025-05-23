@@ -1,49 +1,31 @@
 pipeline {
-    agent any
-    environment {
-        SONAR_TOKEN = credentials('SONAR_TOKEN') // 你在 Jenkins 里设置的 token ID
+  agent any
+
+  stages {
+    stage('Build') {
+      steps {
+        echo 'Building...'
+      }
     }
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/xxt112/8.2CDevSecOps.git'
-            }
-        }
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-        stage('SonarCloud Analysis') {
-            steps {
-                sh '''
-                set -x
-                echo ">>> Current directory:"
-                pwd
-                echo ">>> Contents:"
-                ls -alh
-
-                echo ">>> Cleaning"
-                rm -rf sonar-scanner-5.0.1.3006-linux sonar-scanner.zip
-
-                echo ">>> Downloading"
-                curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-
-                echo ">>> Unzipping"
-                unzip -q sonar-scanner.zip
-
-                echo ">>> Granting permissions"
-                chmod +x sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner
-
-                echo ">>> Running scanner"
-                sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
-                    -Dsonar.projectKey=xxt112 \
-                    -Dsonar.organization=xxt112 \
-                    -Dsonar.sources=. \
-                    -Dsonar.host.url=https://sonarcloud.io \
-                    -Dsonar.login=$SONAR_TOKEN
-                '''
-            }
-        }
+    stage('Test') {
+      steps {
+        echo 'Testing...'
+        // 模拟测试失败：你也可以加个 error 'fail' 看失败通知
+        // error 'Tests failed'
+      }
     }
+  }
+
+  post {
+    always {
+      emailext (
+        subject: "Build Status: ${currentBuild.currentResult}",
+        body: """<p>Build finished with status: ${currentBuild.currentResult}</p>
+                 <p>Check the details at: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
+        to: "你的邮箱地址",
+        mimeType: 'text/html',
+        attachLog: true
+      )
+    }
+  }
 }
